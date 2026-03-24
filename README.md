@@ -29,15 +29,15 @@ Instalar dependências:
 npm install
 
 Executar o projeto:
-npm start
+ npm start
 
 ##  Estrutura do projeto
-src/ - código fonte 
-models/ - estrutura das contas 
-services/ - regras de negócio 
-controllers/ - controle das operações 
+ src/ - código fonte 
+ models/ - estrutura das contas 
+ services/ - regras de negócio 
+ controllers/ - controle das operações 
 
 ## Integrantes
-- Leonardo 
-- Valeria 
-- Samyra
+ - Leonardo 
+ - Valeria 
+ - Samyra
