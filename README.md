@@ -28,7 +28,7 @@ cd senaibank
 Instalar dependências:
 npm install
 
-Executar o projeto:
+ Executar o projeto:
  npm start
 
 ##  Estrutura do projeto
