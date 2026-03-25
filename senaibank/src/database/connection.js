@@ -1,0 +1,1 @@
+// Conexão (SQLite/MySQL) que você mostrou

@@ -1,4 +1,8 @@
 // EDITAR ESTE ARCHIVO ESSA É APENAS UMA BASE
+
+// arquivo para inicializañ{ao do server}
+
+
 import express, {json} from "express";
 import './database/sqlConnection.js'
 import algoRouter from "./routes/algoRoutes.js"
