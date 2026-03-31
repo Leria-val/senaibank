@@ -28,7 +28,7 @@ const operationController = {
             ({balance: account.balance = amount} , {transaction: t});
             
             //Registrar no extrato
-        await Transaction.create({
+            await Transaction.create({
             accountId: account.id,
             type: "DEPOSITAR",
             amount: amount,
@@ -74,7 +74,7 @@ const operationController = {
             ({balance: account.balance = amount} , {transaction: t});
             
 //Registrar
-        await Transaction.create({
+            await Transaction.create({
             accountId: account.id,
             type: "SACAR",
             amount: -amount,
@@ -89,13 +89,14 @@ const operationController = {
             });
         } catch (error) {
         await t.rollback();
-      return res.status(500).json({
-        success: false,
-        message: "Erro ao realizar saque",
-        error: error.message,
+            return res.status(500).json({
+            success: false,
+            message: "Erro ao realizar saque",
+            error: error.message,
       });
     }
   },
+  
 //TRANSFERIR
   
   transferir: async (req, res) => {

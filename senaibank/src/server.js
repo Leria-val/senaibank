@@ -2,11 +2,10 @@
 
 // arquivo para inicializañ{ao do server}
 
-
 import express, {json} from "express";
-import './database/sqlConnection.js'
-import algoRouter from "./routes/algoRoutes.js"
-import algo2Routesr from "./routes/algo2Routes.js";
+import './database/connection.js'
+import operationRoutes from "./routes/operationRoutes.js"
+import accountRoutes from "./routes/accountRoutes.js";
 
 import 'dotenv/config'
 
@@ -14,8 +13,8 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(json());
-app.use('/products', productRouter); 
-app.use('/categories', categoryRouter); 
+app.use('/accounts', accountRoutes); 
+app.use('/operations', operationRoutes); 
   
 
 
