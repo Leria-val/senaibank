@@ -1,27 +1,20 @@
 // Conexão (SQLite/MySQL) que você mostrou
+const mysql = require("mysql2");
 
-import { Sequelize } from "sequelize";
-import 'dotenv/config'
-
-const database = process.env.DB
-const user = process.env.DBUSER
-const password = process.env.DBPASSWORD
-
-
-const sequelize = new Sequelize(database, user, password, {
+const connection = mysql.createConnection({
   host: "localhost",
-  dialect: "mysql",
-  port: 3306,
+  user: "root",
+  password: "senai",
+  database: "senaibank"
 });
 
-async function connect() {
-  try {
-    await sequelize.authenticate();
-    await sequelize.sync({alter:true})
-    console.log("✅ Conexao com SQL estabelecida");
-  } catch (error) {
-    console.error("❌ Error ao conectar no SQL:", error);
+connection.connect((err) => {
+  if (err) {
+    console.error("Erro ao conectar:", err);
+    return;
   }
-}
 
-export { sequelize, connect };
+  console.log("Conectado ao MySQL");
+});
+
+module.exports = connection;
