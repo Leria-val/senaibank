@@ -16,7 +16,7 @@ const accountController = {
         });
       } catch (error) {
         return res.status(500).json({
-          success: true,
+          success: false,
           message: "error ao listar contas",
           error: error.message,
         });
@@ -95,42 +95,46 @@ const accountController = {
   },
 
   delete: async (req, res) => {
-    try {
-      const { id } = req.params;
+try {
+const { id } = req.params;
+const account = await Account.findByPk(id);
 
-      const account = await Account.findByPk(id);
+if (!account) {
+return res.status(404).json({
+success: false,
+data: null,
+message: "Conta não encontrada",
+});
+}
 
-      if (!account) {
-        return res.status(404).json({
-          success: false,
-          data: null,
-          message: "Conta não encontrada",
-        });
-      }
-      //verificação de segrurança: nao permite excluir contas com saldo positivo
-      if (account.saldo > 0) {
-        return res.status(400).json({
-        success: false,
-        message: "nao e possivel excluir uma conta com saldo positivo. Saque o dinheiro primeiro",
-      });
+ //verificação de segrurança: nao permite excluir contas com saldo positivo
 
-    } await account.destroy();
+if (account.saldo > 0) {
+return res.status(400).json({
+success: false,
+message: "Não é possível excluir uma conta com saldo positivo. Saque o dinheiro primeiro",
+});
+}
 
-     return res.status(200).json({
-        success: true,
-        data: null,
-        message: "conta excluida com successo",
-      });
+await account.destroy();
 
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: "Erro ao remover conta",
-        error: error.message,
-      });
-    }
-  },
+return res.status(200).json({
+success: true,
+data: null,
+message: "Conta excluída com sucesso",
+});
+
+} catch (error) {
+return res.status(500).json({
+success: false,
+message: "Erro ao remover conta",
+error: error.message,
+});
+}
+},
 };
 
 
-export default accountController();
+export default accountController;
+
+

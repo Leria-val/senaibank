@@ -25,7 +25,7 @@ const operationController = {
 //Atualizar saldo
 
             await account.update
-            ({balance: account.balance = amount} , {transaction: t});
+            ({balance: account.balance + amount} , {transaction: t});
             
             //Registrar no extrato
             await Transaction.create({
@@ -96,7 +96,7 @@ const operationController = {
       });
     }
   },
-  
+
 //TRANSFERIR
   
   transferir: async (req, res) => {
@@ -105,18 +105,20 @@ const operationController = {
             const {fromNumber, toNumber, amount } = req.body;
 
             const sourceAccount = await Account.findOne({
+                where: {number: fromNumberNumber} });
+            const targetAccount = await Account.findOne({
                 where: {number: toNumber}
             });
 
             if (!sourceAccount || !targetAccount) {
                 return res.status(400).json({
-                    succes: false,
+                    success: false,
                     message:"UMA OU AMBAS CONTAS NÃO FORAM ENCONTRADAS"
                 });
             }
             if (sourceAccount.balance < amount) {
                 return res.status(400).json({
-                    succes: false,
+                    success: false,
                     message:"saldo insuficiente PARA TRANSFERENCIA"
                 });
             }
@@ -126,13 +128,13 @@ const operationController = {
             balance: sourceAccount.balance - amount},
             {transaction: t});
             await targetAccount.update({
-            balance: targetAccount.balance - amount},
+            balance: targetAccount.balance + amount},
             {transaction: t});
 
 
         await Transaction.bulkCreate([
             {accountId: sourceAccount.id, type : "TRANSFERIR_OUT", amount: -amount },
-            {accountId: targetAccount.id, type: "TRANSFERIR_IN", amount: -amount},
+            {accountId: targetAccount.id, type: "TRANSFERIR_IN", amount: amount},
         ], {transaction: t});
 
             await t.commit();
