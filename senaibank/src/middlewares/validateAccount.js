@@ -15,7 +15,7 @@ Account.findOne({ cpf});
 
         if (existingAccount) {
             return res.status(400).json({
-                error: ' CPF ja cadastrado'
+                error: ' CPF jÁ cadastrado'
             });
         }
 
