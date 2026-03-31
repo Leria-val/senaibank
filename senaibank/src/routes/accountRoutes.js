@@ -3,14 +3,15 @@
 
 
 import express from "express";
-import algoController from "../controllers/algoController.js";
+import accountController from "../controllers/AccountControllers.js";
+import validateAccount from "../middlewares/validateAccount.js";
 
-const algoRouter = express.Router();
+const accountRouter = express.Router();
 
-algoRouter.get('/', algoController.getAll)
-algoRouter.get('/:id', algoController.getById)
-algoRouter.post('/', algoController.create)
-algoRouter.put('/:id', algoController.update)
-algoRouter.delete('/:id', algoController.delete)
+accountRouter.get('/', accountController.getAll)
+accountRouter.get('/:id', accountController.getById)
+accountRouter.post('/', validateAccount, accountController.create)
+accountRouter.put('/:id', accountController.update)
+accountRouter.delete('/:id', accountController.delete)
 
-export default algoRouter;
+export default accountRouter;
