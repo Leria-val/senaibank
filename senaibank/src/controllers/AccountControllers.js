@@ -1,6 +1,4 @@
 // Criar, editar, deletar, saldo
-
-
 import Account from "../models/Account.js";
 import sequelize from "../config/database.js"; // Seu arquivo de conexão
 
