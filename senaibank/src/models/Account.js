@@ -1,58 +1,38 @@
-// Modelo da conta (nome, cpf, saldo...)
-const connection = require("../database/connection");
+import { DataTypes } from "sequelize";
+import sequelize from "../database/connection.js";
 
-class Account {
+const Account = sequelize.define("Account", {
+  // El ID se crea automáticamente como PRIMARY KEY e INCREMENTAL
+  nome_usuario: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  cpf: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true, // Importante para que no haya dos cuentas iguales
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    validate: {
+      isEmail: true,
+    },
+  },
+  senha: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  saldo: {
+    type: DataTypes.DECIMAL(10, 2), // Permite dos decimales para el dinero
+    allowNull: false,
+    defaultValue: 0,
+  },
+}, {
+  // Opciones adicionales
+  tableName: 'accounts', // Nombre de la tabla en la DB
+  timestamps: true,      // Crea automaticamente 'createdAt' y 'updatedAt'
+});
 
-  static create(data, callback) {
-    const sql = `
-      INSERT INTO accounts (name, cpf, email, balance)
-      VALUES (?, ?, ?, 0)
-    `;
-
-    connection.query(
-      sql,
-      [data.name, data.cpf, data.email],
-      callback
-    );
-  }
-
-  static findAll(callback) {
-    connection.query(
-      "SELECT * FROM accounts",
-      callback
-    );
-  }
-
-  static findById(id, callback) {
-    connection.query(
-      "SELECT * FROM accounts WHERE id = ?",
-      [id],
-      callback
-    );
-  }
-
-  static update(id, data, callback) {
-    const sql = `
-      UPDATE accounts
-      SET name = ?, email = ?
-      WHERE id = ?
-    `;
-
-    connection.query(
-      sql,
-      [data.name, data.email, id],
-      callback
-    );
-  }
-
-  static delete(id, callback) {
-    connection.query(
-      "DELETE FROM accounts WHERE id = ?",
-      [id],
-      callback
-    );
-  }
-
-}
-
-module.exports = Account;
+export default Account;

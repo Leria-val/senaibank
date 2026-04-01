@@ -1,27 +1,37 @@
-// Modelo para o extrato (saques, depósitos...)
-const db = require("../database/connection");
+import { DataTypes } from "sequelize";
+import sequelize from "../database/connection.js";
+import Account from "./Account.js"; // Importamos para crear la relación
 
-class Transaction {
+const Transaction = sequelize.define("Transaction", {
+  // ID autoincremental automático
+  accountId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'accounts', // Nombre de la tabla de destino
+      key: 'id'
+    }
+  },
+  type: {
+    type: DataTypes.ENUM(
+      "DEPOSITO", 
+      "SAQUE", 
+      "TRANSFERENCIA_ENVIADA", 
+      "TRANSFERENCIA_RECEBIDA"
+    ),
+    allowNull: false,
+  },
+  amount: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+  }
+}, {
+  tableName: 'transactions',
+  timestamps: true, // Esto nos da la fecha exacta de la transacción (Extrato)
+});
 
- static create(accountId, type, amount, callback) {
+// Configuración de la Relación 
+Account.hasMany(Transaction, { foreignKey: 'accountId', as: 'transactions' });
+Transaction.belongsTo(Account, { foreignKey: 'accountId' });
 
-  const sql = `
-   INSERT INTO transactions (account_id, type, amount)
-   VALUES (?, ?, ?)
-  `;
-
-  db.query(sql, [accountId, type, amount], callback);
- }
-
- static getByAccount(accountId, callback) {
-
-  db.query(
-   "SELECT * FROM transactions WHERE account_id = ?",
-   [accountId],
-   callback
-  );
- }
-
-}
-
-module.exports = Transaction;
+export default Transaction;

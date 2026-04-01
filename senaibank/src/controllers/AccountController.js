@@ -1,6 +1,7 @@
 // Criar, editar, deletar, saldo
 import Account from "../models/Account.js";
 import sequelize from "../database/connection.js"; 
+import bcrypt from "bcrypt"; // Importante para seguridad
 
 const accountController = {
 
@@ -24,41 +25,42 @@ const accountController = {
     },
 
   // Criar conta bancária
-  create: async (req, res) => {
-    try {
-      const { nome_usuario, cpf, email, senha } = req.body;
 
-      // Validação básica (Requisitos obrigatórios)
-      if (!nome_usuario || !cpf || !email || !senha) {
-        return res.status(400).json({
-          success: false,
-          message: "Todos os campos são obrigatórios"
-        });
-      }
+create: async (req, res) => {
+  try {
+    const { nome_usuario, cpf, email, senha } = req.body;
 
-      const account = await Account.create({
-        nome_usuario,
-        cpf,
-        email,
-        senha, //aqui vai o hash
-        saldo: 0
-      });
-
-      return res.status(201).json({
-        success: true,
-        data: account,
-        message: "conta criada com sucesso"
-      });
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: "Erro ao criar conta bancária",
-        error: error.message
-      });
+    if (!nome_usuario || !cpf || !email || !senha) {
+      return res.status(400).json({ success: false, message: "Campos obrigatórios faltando" });
     }
-  },
 
-  
+    // Hash de la contraseña (Seguridad)
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(senha, salt);
+
+    const account = await Account.create({
+      nome_usuario,
+      cpf,
+      email,
+      senha: hashedPassword,
+      saldo: 0
+    });
+
+    // Eliminar la contraseña de la respuesta por seguridad
+    const accountData = account.toJSON();
+    delete accountData.senha;
+
+    return res.status(201).json({
+      success: true,
+      data: accountData,
+      message: "Conta criada com sucesso"
+    });
+  } catch (error) {
+    
+    return res.status(500).json({ success: false, error: error.message });
+  }
+},
+ 
   update: async (req, res) => {
     try {
       const { id } = req.params;

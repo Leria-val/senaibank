@@ -1,53 +1,65 @@
 import Account from "../models/Account.js";
 
-async function validateOperation(req, res, next) {
-    const { accountId, amout, type } =
-    req.body;
+const validateOperation = async (req, res, next) => {
+    // Corregimos los nombres de las variables (amount con 'n')
+    const { accountNumber, amount, type } = req.body;
 
-    if (!accountId || !amout || !typpe) {
+    // 1. Validar campos obligatorios
+    if (!accountNumber || !amount) {
         return res.status(400).json({
-             error: "Campos obrigatorios nao preenchidos"
+            success: false,
+            message: "Número da conta e valor são obrigatórios."
         });
     }
 
-    if (amout <= 0) {
+    // 2. Validar que el valor sea positivo y numérico
+    if (isNaN(amount) || amount <= 0) {
         return res.status(400).json({
-            error: "O valor deve ser maior que zero"
+            success: false,
+            message: "O valor da operação deve ser um número maior que zero."
         });
     }
 
     try {
-        const account = await
-Account.findById(accountId);
+        // 3. Buscar la cuenta usando Sequelize (findByPk o findOne)
+        const account = await Account.findByPk(accountNumber);
         
         if (!account) {
             return res.status(404).json({
-                error: "Conta nao encontradada"
+                success: false,
+                message: "Conta não encontrada."
             });
         }
 
-    const validTypes = ["deposit","withdraw"];
-    
-    if (!validTypes.includes(type)) {
-        return res.status(400).json({
-            error: "Tipo de operacao invalido"
-        });                
-    }
+        // 4. Validar tipos de operación (Opcional si usas rutas separadas, pero bueno por seguridad)
+        const validTypes = ["DEPOSITO", "SAQUE", "TRANSFERENCIA"];
+        if (type && !validTypes.includes(type.toUpperCase())) {
+            return res.status(400).json({
+                success: false,
+                message: "Tipo de operação inválido."
+            });
+        }
 
-    if (type === "withdraw" && account.balnce < amout) {
-        return res.status(400).json({
-            error: "Saldo insuficiente"
+        // 5. Validar saldo suficiente (Solo para Saques o Transferencias)
+        // Usamos 'saldo' que es el nombre en tu modelo
+        if ((type === "SAQUE" || type === "TRANSFERENCIA") && account.saldo < amount) {
+            return res.status(400).json({
+                success: false,
+                message: "Saldo insuficiente para realizar esta operação."
+            });
+        }
+
+        // Guardamos la cuenta en el objeto request para que el controlador no tenga que buscarla de nuevo
+        req.account = account;
+        next();
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Erro interno na validação da operação.",
+            error: error.message
         });
     }
-
-    req.account = account;
-
-    next();
-} catch (err) {
-    return res.status(500).json({
-        error: "Erro interno no servidor"
-     });
-   }
-}
+};
 
 export default validateOperation;
