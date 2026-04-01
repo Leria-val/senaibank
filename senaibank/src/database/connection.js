@@ -1,20 +1,22 @@
-const mysql = require("mysql2");
+import { Sequelize } from "sequelize";
+import 'dotenv/config';
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "senai",
-  database: "senaibank"
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.error("Erro ao conectar:", err);
-    return;
+const sequelize = new Sequelize(
+  process.env.DB_NAME, 
+  process.env.DB_USER, 
+  process.env.DB_PASS, 
+  {
+    host: process.env.DB_HOST || "localhost",
+    dialect: "postgres", 
+    port: 5432,          
+    logging: false,
   }
+);
 
-  console.log("Conectado ao MySQL");
-});
+async function connect() {
+  await sequelize.authenticate();
+  console.log("conexão com PostgreSQL estabelecida.");
+}
 
-module.exports = connection;
-
+export { connect }; 
+export default sequelize; 

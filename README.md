@@ -25,8 +25,9 @@ https://github.com/Leria-val/senaibank
 cd senaibank
 
 3. Executar o projeto:
-Instalar dependências:
+Instalar dependências (express sequelize pg pg-hstore dotenv bcrypt):
 npm install
+
 
  Executar o projeto:
  npm start
