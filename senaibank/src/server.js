@@ -20,7 +20,7 @@ const startServer = async () => {
     await connect(); 
 
     await sequelize.sync({ force: false }); 
-    console.log("✅ Tabelas sincronizadas com sucesso.");
+    console.log("Tabelas sincronizadas com sucesso.");
 
     app.listen(PORT, () => {
       console.log(`SERVIDOR RODANDO EM: http://localhost:${PORT}`);
