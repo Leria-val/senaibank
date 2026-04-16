@@ -5,6 +5,8 @@ import validateAccount from "../middlewares/validateAccount.js";
 
 const accountRoutes = express.Router();
 
+accountRoutes.post("/login", accountController.login);
+
 accountRoutes.get('/', accountController.getAll);
 accountRoutes.post('/', validateAccount, accountController.create); 
 accountRoutes.put('/:id', validateAccount, accountController.update);

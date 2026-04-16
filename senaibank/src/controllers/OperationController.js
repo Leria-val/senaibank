@@ -91,7 +91,6 @@ const operationController = {
     }
   },
 
-  // --- ¡AQUÍ ESTÁ LA FUNCIÓN RECUPERADA! ---
   getStatement: async (req, res) => {
     try {
       const { id } = req.params;

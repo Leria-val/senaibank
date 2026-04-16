@@ -2,8 +2,46 @@
 import Account from "../models/Account.js";
 import sequelize from "../database/connection.js"; 
 import bcrypt from "bcrypt"; // Importante para seguridad
+import jwt from "jsonwebtoken";
+
 
 const accountController = {
+
+  login: async (req, res) => {
+    try {
+        const { email, senha } = req.body;
+
+        // 1. Buscar al usuario por email
+        const account = await Account.findOne({ where: { email } });
+        if (!account) {
+            return res.status(401).json({ success: false, message: "E-mail ou senha inválidos" });
+        }
+
+        // 2. Comparar la contraseña usando bcrypt
+        const isMatch = await bcrypt.compare(senha, account.senha);
+        if (!isMatch) {
+            return res.status(401).json({ success: false, message: "E-mail ou senha inválidos" });
+        }
+
+        // 3. Generar el Token JWT
+        // Usa una palabra secreta (puedes ponerla en tu .env como JWT_SECRET)
+        const token = jwt.sign(
+            { id: account.id, email: account.email },
+            process.env.JWT_SECRET || "segredo", 
+            { expiresIn: "1h" }
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Login realizado com sucesso",
+            token: token
+        });
+
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+},
+
 
    //listar
    getAll: async (req, res) => {
@@ -75,18 +113,24 @@ create: async (req, res) => {
           message: "Conta não encontrada",
         });
       }
-
-      await account.update({
+let updatedData = {
         nome_usuario: nome_usuario ?? account.nome_usuario,
         email: email ?? account.email,
-        senha: senha ?? account.senha,
-      });
+      };
+
+      if (senha) {
+        const salt = await bcrypt.genSalt(10);
+        updatedData.senha = await bcrypt.hash(senha, salt);
+      }
+
+      await account.update(updatedData);
 
       return res.status(200).json({
         success: true,
         data: account,
         message: "dados da conta atualizada com sucesso!",
       });
+     
     } catch (error) {
       return res.status(500).json({
         success: false,
