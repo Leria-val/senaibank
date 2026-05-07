@@ -1,4 +1,3 @@
-// operationRoutes.js - CORREGIDO
 import express from "express";
 import operationController from "../controllers/OperationController.js";
 import validateOperation from "../middlewares/validateOperation.js";
